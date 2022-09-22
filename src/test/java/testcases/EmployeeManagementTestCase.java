@@ -10,6 +10,7 @@ public class EmployeeManagementTestCase extends BaseTest{
 
     @Test(priority = 0)
     public void navigateTest(){
+
         EmployeeManagementPage emp = new EmployeeManagementPage(driver);
         emp.navigateToEmp();
 
