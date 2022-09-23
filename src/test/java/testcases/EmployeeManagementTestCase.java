@@ -1,8 +1,12 @@
 package testcases;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.EmployeeManagementPage;
+
+import java.util.List;
 
 public class EmployeeManagementTestCase extends BaseTest{
 
@@ -47,11 +51,9 @@ public class EmployeeManagementTestCase extends BaseTest{
 
     }
 
-
     public void showEmployees() throws InterruptedException {
         EmployeeManagementPage emp = new EmployeeManagementPage(driver);
         emp.showEmployees();
     }
-
 
 }
