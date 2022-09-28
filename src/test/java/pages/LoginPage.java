@@ -5,13 +5,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class LoginPage {
+public class LoginPage extends Utility {
     WebDriver driver;
     By email;
     By password;
     By login;
 
     public LoginPage(WebDriver driver) {
+        super(driver);
         this.driver= driver;
         email = By.id("txtUsername");
         password = By.id("txtPassword");
@@ -24,12 +25,6 @@ public class LoginPage {
         waitAndClick(password);
         driver.findElement(password).sendKeys(pass);
         waitAndClick(login);
-
     }
 
-    public void waitAndClick(By element){
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-        wait.until(ExpectedConditions.elementToBeClickable(element));
-        driver.findElement(element).click();
-    }
 }

@@ -54,8 +54,8 @@ public class BaseTest {
         driver.get(prop.getProperty("websiteUrl"));
 
         // Login to the page
-        obj = new LoginPage(driver);
-        obj.login(prop.getProperty("username"), prop.getProperty("password"));
+//        obj = new LoginPage(driver);
+//        obj.login(prop.getProperty("username"), prop.getProperty("password"));
 
     }
 
