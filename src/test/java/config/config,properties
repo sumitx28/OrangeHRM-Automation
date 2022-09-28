@@ -2,3 +2,4 @@ username = Admin
 password = XwFwrZ28@Y
 websiteUrl = https://sanjay29-trials76.orangehrmlive.com/
 expectedUrlManagementPage = https://sanjay29-trials76.orangehrmlive.com/client/#/pim/employees
+locationsPageUrl = https://sanjay29-trials76.orangehrmlive.com/client/#/admin/locations

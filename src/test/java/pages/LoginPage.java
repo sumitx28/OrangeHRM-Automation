@@ -2,8 +2,6 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginPage extends Utility {
     WebDriver driver;
@@ -20,9 +18,9 @@ public class LoginPage extends Utility {
     }
 
     public void login(String user, String pass) throws InterruptedException{
-        waitAndClick(email);
+        waitTillClickable(email);
         driver.findElement(email).sendKeys(user);
-        waitAndClick(password);
+        waitTillClickable(password);
         driver.findElement(password).sendKeys(pass);
         waitAndClick(login);
     }

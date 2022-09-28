@@ -4,19 +4,21 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import java.util.concurrent.TimeUnit;
 
-public class DashboardPage {
+public class DashboardPage extends Utility {
     WebDriver driver;
-    By search= By.xpath("//input[@id=\"menuQuickSearch_menuQuickSearch\"]");
-    By searchText= By.xpath("//div[@class=\"menu-title\"][text()=\"Locations\"]");
+    By search;
+    By searchText;
 
     public DashboardPage(WebDriver driver) {
-        this.driver=driver;
+        super(driver);
+        this.driver = driver;
+        this.search = By.xpath("//input[@id=\"menuQuickSearch_menuQuickSearch\"]");
+        this.searchText = By.xpath("//div[@class=\"menu-title\"][text()=\"Locations\"]");
     }
 
     public void searchAndClick() throws InterruptedException {
+        waitAndClick(search);
         driver.findElement(search).sendKeys("Locations");
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        driver.findElement(searchText).click();
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        waitAndClick(searchText);
     }
 }

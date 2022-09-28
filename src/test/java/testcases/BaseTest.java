@@ -5,8 +5,11 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.LoginPage;
@@ -31,12 +34,13 @@ public class BaseTest {
         extent = new ExtentReports();
         extent.attachReporter(spark);
     }
+
     @BeforeMethod
     public void beforeMethod(Method method) {
         test= extent.createTest(method.getName());
     }
     @BeforeClass
-    public void setUp() throws InterruptedException, IOException {
+    public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
 
@@ -53,9 +57,17 @@ public class BaseTest {
         driver.manage().window().maximize();
         driver.get(prop.getProperty("websiteUrl"));
 
-        // Login to the page
-//        obj = new LoginPage(driver);
-//        obj.login(prop.getProperty("username"), prop.getProperty("password"));
+        // Login to the Application - Comment next remaining lines if Testing the LoginTestCase
+        obj = new LoginPage(driver);
+        try{
+            obj.login(prop.getProperty("username"), prop.getProperty("password"));
+            test.log(Status.PASS , "Login Successful");
+        }
+        catch (Exception e){
+            test.log(Status.FAIL , "Login Failed");
+            driver.close();
+        }
+
 
     }
 
@@ -81,6 +93,11 @@ public class BaseTest {
                     + driver.getCurrentUrl()+ " Expected URL: " + url);
         }
 
+    }
+
+    public void waitTillClickable(By element){
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
 }
