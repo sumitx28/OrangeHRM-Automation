@@ -1,8 +1,11 @@
 package testcases;
 
+import com.aventstack.extentreports.Status;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pages.EmployeeManagementPage;
 
@@ -10,50 +13,78 @@ import java.util.List;
 
 public class EmployeeManagementTestCase extends BaseTest{
 
-
-
-    @Test(priority = 0)
-    public void navigateTest(){
-
+    // Test - 1 : Navigating to the Employee Management Page
+    @Test()
+    public void navigateToEmployeeManagementPage(){
         EmployeeManagementPage emp = new EmployeeManagementPage(driver);
         emp.navigateToEmp();
 
-        String expectedUrl = "https://sanjay29-trials76.orangehrmlive.com/client/#/pim/employees";
+        // Assertion and Extent Report for Navigation
+        super.verifyCurrentUrl(prop.getProperty("expectedUrlManagementPage"));
+    }
 
-        if(!expectedUrl.equals(driver.getCurrentUrl().toString())){
-            Assert.fail("Error navigating to employee management page");
+    // Test - 2 : Add Employee details and Verify the added employee
+    @Test(priority = 1 , dataProvider = "testData" , dependsOnMethods = "navigateToEmployeeManagementPage")
+    public void fillAndValidateEmployeeDetails(String firstName , String middleName , String lastName , String location) throws InterruptedException {
+        EmployeeManagementPage emp = new EmployeeManagementPage(driver);
+        emp.navigateToEmp();
+        // Assertion and Report for clickAddEmployee Button
+        try{
+            emp.clickAddEmployee();
+            test.log(Status.PASS , "Add employee button clicked successfully");
+        }catch (Exception e){
+            test.log(Status.FAIL , "Add Employee Button click FAILED with error : \n" + e);
+            Assert.fail("Add employee button click failed");
         }
-        else{
-            System.out.println("Success");
+
+        test.log(Status.INFO , "Test Details : " + "Name : " + firstName + " " + middleName + " " + lastName + " ,  " + "Office : " + location);
+
+        // Assertion and Report for Filling and Saving Employee Details
+        try{
+            emp.addEmployeeDetails(firstName , middleName , lastName , location);
+            test.log(Status.PASS , "Employee details added successfully");
+        }catch (Exception e){
+            test.log(Status.FAIL , "Adding Employee Details FAILED with error : " + e);
+            Assert.fail("Adding Employee failed");
         }
 
-    }
+        // Assertion and Report for Verifying the employee after saving all the details.
+        try{
+            Boolean searchRes = emp.verifyEmployee(firstName + " " + middleName + " " + lastName , location);
+            if(searchRes){
+                test.log(Status.PASS , "Employee Verified. Add Successful");
+            }
+            else{
+                test.log(Status.FAIL , "Could not find employee using search");
+                Assert.fail("Could not find employee using search");
+            }
+        }catch (Exception e){
+            test.log(Status.FAIL , "Failed to verify Employee  NAME : " +firstName + " " + middleName + " " + lastName + "STATUS : " + e);
+            Assert.fail("Failed to verify employee");
+        }
 
-    @Test(priority = 1)
-    public void addEmployeeDetailsTest() throws InterruptedException {
-
-        EmployeeManagementPage emp = new EmployeeManagementPage(driver);
-        Thread.sleep(5000);
-        emp.clickAddEmployee();
-        System.out.println("Click on Add Employee button Successful");
-
-    }
-
-    @Test(priority = 2)
-    public void fillDetailsTest() throws InterruptedException {
-        EmployeeManagementPage emp = new EmployeeManagementPage(driver);
-        Thread.sleep(4000);
-        emp.addEmployeeDetails("ABC" , "DEF" , "GHI");
-
-        Thread.sleep(5000);
-
-        showEmployees();
 
     }
 
-    public void showEmployees() throws InterruptedException {
+    // Data Provider for AddEmployeeDetails Test
+    @DataProvider
+    public Object[][] testData(){
+        return new Object[][] {
+                {"Sam" , "T" , "Patel" , "India Office"}
+        };
+    }
+
+    // Test - 3 : Test to clear all filters and see all the employees
+    @Test(priority = 2 , dependsOnMethods = "fillAndValidateEmployeeDetails")
+    public void clearFiltersTest(){
         EmployeeManagementPage emp = new EmployeeManagementPage(driver);
-        emp.showEmployees();
+        try{
+            emp.clearFilters();
+            test.log(Status.PASS , "Successfully Cleared filters on Employee Page");
+        }catch (Exception e){
+            test.log(Status.FAIL , "Error showing employee details after adding. ERROR : " + e);
+            Assert.fail("Failed to clear filters");
+        }
     }
 
 }

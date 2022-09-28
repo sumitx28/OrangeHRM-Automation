@@ -4,67 +4,95 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.HashMap;
 
 public class EmployeeManagementPage {
 
     WebDriver driver;
+    By employeeManagementButtonElement;
+    By addEmployeeButtonElement;
+    By firstNameElement;
+    By middleNameElement;
+    By lastNameElement;
+    By locationElement;
+    By saveButtonElement;
+    By backButtonElement;
+    By goBackButtonElement;
+    By employeeFilterElement;
+    By filterSearchButtonElement;
+    HashMap<String , String> map;
 
-    public EmployeeManagementPage(WebDriver driver){
+
+    // Assigning the values for driver and elements.
+    public EmployeeManagementPage(WebDriver driver) {
         this.driver = driver;
-    }
+        employeeManagementButtonElement = By.id("menu_item_128");
+        addEmployeeButtonElement = By.id("addEmployeeButton");
+        firstNameElement = By.id("first-name-box");
+        middleNameElement = By.id("middle-name-box");
+        lastNameElement = By.id("last-name-box");
+        locationElement = By.id("location");
+        saveButtonElement = By.id("modal-save-button");
+        backButtonElement = By.xpath("//*[@id=\"top-ribbon-menu\"]/div/div[2]/a");
+        goBackButtonElement = By.xpath("//*[@id=\"ribbon-actions\"]/ui-view/ul/li[3]/a");
+        employeeFilterElement = By.id("emp_search_mdl_employee_name_filter_value");
+        filterSearchButtonElement = By.xpath("//*[@id=\"employee_list_search_modal\"]/div[2]/a[1]");
 
+        map = new HashMap<>();
 
-    public void navigateToEmp(){
-        driver.findElement(By.id("menu_item_128")).click();
-    }
-
-    public void clickAddEmployee(){
-        driver.findElement(By.xpath("/html/body/div[1]/div[1]/div/div[2]/section/div[3]/ui-view/div[1]/div/div/div/div/a")).click();
-
-        WebElement element = driver.findElement(By.id("addEmployeeButton"));
-
-        Actions actions = new Actions(driver);
-
-        actions.moveToElement(element).click().perform();
-
-    }
-
-    public void addEmployeeDetails(String fname , String mname , String lname) throws InterruptedException {
-        driver.findElement(By.id("first-name-box")).sendKeys(fname);
-        driver.findElement(By.id("middle-name-box")).sendKeys(mname);
-        driver.findElement(By.id("last-name-box")).sendKeys(lname);
-
-        Select se = new Select(driver.findElement(By.id("location")));
-
-        se.selectByValue("string:1");
-
-        Thread.sleep(2000);
-
-        driver.findElement(By.id("modal-save-button")).click();
-
-        Thread.sleep(5000);
-
-        driver.findElement(By.xpath("//*[@id=\"top-ribbon-menu\"]/div/div[2]/a")).click();
-
-        System.out.println("Employee Added Successfully");
-
+        map.put("France Office" , "string:41" );
+        map.put("Germany Office" , "string:23");
+        map.put("India Office" , "string:1");
 
     }
 
-    public void showEmployees() throws InterruptedException {
-        Thread.sleep(4000);
+    // Navigate to the Employee Management Page
+    public void navigateToEmp() {
+        waitAndClick(employeeManagementButtonElement);
+    }
 
-        driver.findElement(By.xpath("//*[@id=\"ribbon-actions\"]/ui-view/ul/li[3]/a")).click();
+    // Click on Add Employee + Button
+    public void clickAddEmployee() {
+        waitAndClick(addEmployeeButtonElement);
+    }
 
-        Thread.sleep(2000);
+    // Fill employee details -> First Name, Middle Name, Last Name and Location
+    public void addEmployeeDetails(String firstName, String middleName, String lastName , String office) throws InterruptedException {
+        waitAndClick(firstNameElement);
+        waitAndClick(middleNameElement);
+        waitAndClick(lastNameElement);
+        driver.findElement(firstNameElement).sendKeys(firstName);
+        driver.findElement(middleNameElement).sendKeys(middleName);
+        driver.findElement(lastNameElement).sendKeys(lastName);
 
-        driver.findElement(By.id("emp_search_mdl_employee_name_filter_value")).clear();
+        Select se = new Select(driver.findElement(locationElement));
+        se.selectByValue(map.get(office));
 
-        Thread.sleep(1000);
+        waitAndClick(saveButtonElement);
+        waitAndClick(backButtonElement);
+    }
 
-        driver.findElement(By.xpath("//*[@id=\"employee_list_search_modal\"]/div[2]/a[1]")).click();
+    // Clear default filters from the page
+    public void clearFilters() throws InterruptedException {
+        waitAndClick(goBackButtonElement);
+        waitAndClick(employeeFilterElement);
+        waitAndClick(filterSearchButtonElement);
+    }
 
+    // Verify that Employee has been added
+    public Boolean verifyEmployee(String name , String location) throws InterruptedException {
+        SearchPage search = new SearchPage(driver);
+        return search.searchEmp(name , location);
+    }
+
+    public void waitAndClick(By element){
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+        driver.findElement(element).click();
     }
 
 }

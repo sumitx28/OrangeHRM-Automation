@@ -1,8 +1,10 @@
 package testcases;
 
+import lombok.Data;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pages.DashboardPage;
 import pages.LocationPage;
@@ -16,11 +18,8 @@ public class locationTestCase extends BaseTest {
 	LocationPage objLocation;
 	DashboardPage objDashboard;
 
-	String locName = "India Office";
-	String country = "India";
-
-	@Test()
-	public void addLocation() throws InterruptedException {
+	@Test(dataProvider = "locData")
+	public void addLocation(String locName , String country) throws InterruptedException {
 		objDashboard=new DashboardPage(driver);
 		objDashboard.searchAndClick();
 
@@ -29,10 +28,16 @@ public class locationTestCase extends BaseTest {
 
 	}
 
-	@Test
-	public void verifyLocation(){
-		WebElement table = driver.findElement(By.xpath("//*[@id=\"locationDiv\"]/crud-panel/div/div/list/table"));
+	@DataProvider
+	public Object[][] locData(){
+		return new Object[][] {
+				{"India Office" , "India"}
+		};
+	}
 
+	@Test(dataProvider = "locData")
+	public void verifyLocation(String locName , String country){
+		WebElement table = driver.findElement(By.xpath("//*[@id=\"locationDiv\"]/crud-panel/div/div/list/table"));
 		List<WebElement> rows = table.findElements(By.tagName("span"));
 
 		for(WebElement elem : rows){
@@ -42,7 +47,6 @@ public class locationTestCase extends BaseTest {
 		}
 
 		Assert.fail("Could not add location");
-
 	}
 
 }

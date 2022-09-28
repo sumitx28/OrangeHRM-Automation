@@ -5,7 +5,6 @@ import pages.SearchPage;
 
 public class SearchPageTestCase extends BaseTest {
     SearchPage sp;
-
     @Test(priority = 0)
     public void navigateToSearchPage() throws InterruptedException {
         sp = new SearchPage(driver);
@@ -16,7 +15,7 @@ public class SearchPageTestCase extends BaseTest {
     @Test(priority = 1)
     public void SearchTest() throws InterruptedException {
         sp = new SearchPage(driver);
-        sp.searchEmp("Vansh Bansal");
+        System.out.println(sp.searchEmp(" Bansal" , "India Office"));
     }
 
 }
